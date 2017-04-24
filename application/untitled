@@ -1,0 +1,27 @@
+
+
+post(){
+	variable
+	array
+	laod
+	$data['answerCheck'] = checkIfAnswerIsCorrect()
+	saveAnswerCount()
+	$questionId = getNextQuestionNumber()
+	$data['result'] = getQuestion($questionId)
+	this load view( data )
+
+} else {
+	qusetion no = uri segment
+	if qustion == 0 {
+	redirect (page)
+	} else {
+		$data['result']  = getQuesion(questionNO)
+		this load view ( data )
+	}
+
+}
+
+saveAnswr()
+{
+	insert
+}

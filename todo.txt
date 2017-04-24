@@ -1,0 +1,12 @@
+delete wlecome controller
+change name of user_controler to userController.php
+
+add comment to each class and function
+
+User_login
+>> UserLogin
+
+instructions
+>> give a meaning full
+
+change the function to verb ( eg: userLogin )
