@@ -93,7 +93,7 @@
  				    </p></a>
  				</div>
  				<div class="col-md-3 col-md-offset-2">
- 				    <a class="btn btn-primary" style="width: 200px;" href="<?php echo base_url();?>index.php/result"><p>
+ 				    <a class="btn btn-primary" style="width: 200px;" href="<?php echo base_url();?>index.php/aresult"><p>
  				    <i class="fa fa-trophy"></i>
  				    <p><span style="color: white; font-weight: bolder;">RESULT</span>
  				    </p></a>

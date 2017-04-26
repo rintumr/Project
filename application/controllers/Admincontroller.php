@@ -244,7 +244,7 @@ class Admincontroller extends CI_Controller {
     }
 
     /**
-    * Function to load conact page
+    * Function to load contact page
     * @param void
     * @return void
     **/

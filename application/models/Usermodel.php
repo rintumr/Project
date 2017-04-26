@@ -112,10 +112,9 @@ class Usermodel extends CI_Model
 	{
 		$this->db->where('email', $email);
 		$query=$this->db->get('Answer');
-		var_dump($query->result());die;
 		$data=$query->num_rows();
 		$details = array('email' => $email,
-						 'marks' => $data
+						 'marks' => $data*10
 						);
 		$this->db->insert('Results',$details);
 	}
@@ -141,11 +140,29 @@ class Usermodel extends CI_Model
 	public function changePassword()
 	{
 		$email= $this->session->userdata('email');
-		length=12;
+		$this->db->where('email', $email);
+		$query=$this->db->get('Userdetails');
+		$value=$query->result();
+        $id=$value[0]->Id;
+		$length=12;
         $characterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";
         $password = substr( str_shuffle( $characterSet ), 0, $length);
         $details = array('password' => $password );
         $this->load->model('Adminmodel');
-        $this->Adminmodel->savePassword($details, $id)
+        $this->Adminmodel->savePassword($details, $id);
+	}
+
+	/**
+	* Function to check the session
+	* @param void
+	* @return void
+	**/
+	public function checkIfUserLoggedIn()
+	{
+	    if($this->session->userdata['isloggedIn']==True){
+	    	if ($this->session->userdata['usertype']=="user") {
+	    		return true;
+	    	}
+	    }	
 	}
 }

@@ -11,7 +11,7 @@ class Usercontroller extends CI_Controller
 {
 	/**
 	*
-	* function for login functionality of user
+	* Function for login functionality of user
 	* @param void
 	* @return void
 	*
@@ -56,6 +56,7 @@ class Usercontroller extends CI_Controller
 		}
 	}
 
+	
 	/**
 	*
 	* Function for user to view the quiz page
@@ -96,7 +97,9 @@ class Usercontroller extends CI_Controller
 		            $this->load->view('Quiz',$question);	
 		    	}	
 		    }
-		}  
+		} 
+
+		$this->Usermodel->changePassword(); 
 	}
 	
 	/**
@@ -109,10 +112,8 @@ class Usercontroller extends CI_Controller
 		$user=$this->session->userdata('email');
 		$this->load->model('Usermodel');
 		$data['result']=$this->Usermodel->getResult($user);
-		// var_dump($data['result']);die();
 		$value= $data['result'];
 		if($value[0]->marks==0){
-		// if ($data['result']->marks == NULL) {
 			$data['message']= "Sorry you have not answered any questions";
 		}
 			$this->load->view('Summary',$data);
@@ -125,8 +126,6 @@ class Usercontroller extends CI_Controller
 	**/
 	public function logoutUser()
 	{
-		$this->load->model('Usermodel');
-		$this->Usermodel->changePassword();
 		$this->session->unset_userdata('email');
         $this->session->unset_userdata('loggedIn');
         $this->session->sess_destroy();

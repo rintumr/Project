@@ -78,7 +78,7 @@
 	 			<thead>
 	 				<tr>
 	 				    <th>ID</th>
-	 					  <th>NAME</th>
+	 					  <th>Email</th>
 	 			  		<th>MARKS</th>
 	 				</tr>
 	 			</thead>
@@ -87,8 +87,8 @@
              <?php foreach ($result as $val) { ;?>
                 <tr>
                  <td><?php echo $val->Id;?></td>
-                 <td><?php echo $val->Name;?></td>
-                 <td><?php echo $val->Marks;?></td>
+                 <td><?php echo $val->email;?></td>
+                 <td><?php echo $val->marks;?></td>
             <?php } ;?>
             </tr>
 	 			</tbody>
