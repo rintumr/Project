@@ -69,16 +69,20 @@
 		 		<h2>THANK YOU!!!!!</h2>
                 <br>
                 <br>
-                <div class="hline"></div>
 		        <?php if(!empty($message)){?>
+                <div class="hline"></div>
 		 			<div style="text-align: center;height:50px;font-weight: bolder;padding-top: 20px">
-		 		    	<?php echo $message['message'];?>
+		 		    	<?php echo $message;?>
 		 			</div>
 		        <?php }?>
                 <br>
 		 		<div class="hline"></div>
 		 		<div class="spacing"></div>
-		 		<div class="spacing"></div>
+		 		<?php if(!empty($result)){?>
+		 		    MARKS:
+                    <?php echo $result[0]->marks;?>
+                      
+	 		    <?php } ;?>
 		 		<div class="spacing"></div>
 		 		<a href="<?php echo base_url();?>index.php/logout" class="btn btn-theme">Logout</a>
 

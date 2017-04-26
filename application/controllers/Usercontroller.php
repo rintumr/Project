@@ -32,7 +32,7 @@ class Usercontroller extends CI_Controller
 
 			if ($this->form_validation->run()==FALSE){
 					$this->load->view('UserLogin');
-				}else{
+			}else{
 
 				$this->load->model('Usermodel');
 				if($this->Usermodel->checkUserExists($data)){
@@ -58,37 +58,43 @@ class Usercontroller extends CI_Controller
 
 	/**
 	*
-	* function for user to view the quiz page
+	* Function for user to view the quiz page
 	* @param void
 	* @return void
 	*
 	**/
 	public function showQuestion()
 	{
+		$this->load->model('Usermodel');
+		$totalQuestion=$this->Usermodel->getNumberOfQuestions();	
+		$quizno=$this->session->userdata('count');
+
 		if ($this->input->post()) {
-			$id = $this->input->post('questionId');
+			$questionid = $this->input->post('questionId');
 			$answer = $this->input->post('options');
-			$details = array('id' => $id,
-			                  'answer'=> $answer
+			$email = $this->session->userdata['email'];
+			$details = array('id' => $questionid,
+			                 'email'=> $email,
+			                 'answer'=> $answer
 			                );
-			$this->load->model('Usermodel');
-			$this->Usermodel->checkAnswer($details);
-			$this->Usermodel->saveResult($details);
-			$this->Usermodel->getNextQuestion($quizno);
+			if($this->Usermodel->checkAnswer($details)){
+			    $this->Usermodel->saveAnswer($details);
+		    }
+		    $quizno = $quizno+1;
+		    if ($quizno <= $totalQuestion){
+		    	$question['result']=$this->Usermodel->getNextQuestion($quizno);
+		        $this->session->set_userdata('count',$quizno);
+		        $this->load->view('Quiz',$question);
+		    }else{
+		    	$this->Usermodel->saveResult($email);	
+		    	redirect('result');
+		    }
 		}else{
-		    $this->load->model('Usermodel');		
-		// $data=$this->Usermodel->getNumberOfQuestions();
-			$quizno=$this->session->userdata('count');
 		    if((isset($quizno))&& !empty($quizno)){
 		    	if ($quizno==1) {
 		    		$question['result']=$this->Usermodel->getFirstQuestion();
 		            $this->load->view('Quiz',$question);	
-		    	}else{
-		            $question['result']=$this->Usermodel->getNextQuestion($quizno);
-		            $quizno = $quizno+1;
-		            $this->session->set_userdata('count',$quizno);
-		            $this->load->view('Quiz',$question);
-		        }	
+		    	}	
 		    }
 		}  
 	}
@@ -98,25 +104,18 @@ class Usercontroller extends CI_Controller
 	* @param void
 	* @return void
 	**/
-	public function submitQuiz()
+	public function showResult()
 	{	
-		if($this->input->post()){
-			$id= $this->uri->segment(2);
-			$email=$this->session->userdata['email'];
-			$email=$this->session->userdata['email'];
-			$ans = $this->input->post('options');
-			$credentials = array('id' => $id,
-			                     'email'=>$email 
-			                    );
-			if (!empty($ans)) {
-			    $this->load->model('Usermodel');
-			    $data['message']=$this->Usermodel->submitQuestion($credentials,$ans);
-			}else{
-				$this->load->model('Usermodel');
-				$data['message']="Please choose an answer";
-		    }
-			    $this->load->view('Summary',$data); 
+		$user=$this->session->userdata('email');
+		$this->load->model('Usermodel');
+		$data['result']=$this->Usermodel->getResult($user);
+		// var_dump($data['result']);die();
+		$value= $data['result'];
+		if($value[0]->marks==0){
+		// if ($data['result']->marks == NULL) {
+			$data['message']= "Sorry you have not answered any questions";
 		}
+			$this->load->view('Summary',$data);
 	}
 
 	/**
@@ -126,6 +125,8 @@ class Usercontroller extends CI_Controller
 	**/
 	public function logoutUser()
 	{
+		$this->load->model('Usermodel');
+		$this->Usermodel->changePassword();
 		$this->session->unset_userdata('email');
         $this->session->unset_userdata('loggedIn');
         $this->session->sess_destroy();
