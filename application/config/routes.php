@@ -58,6 +58,7 @@ $route['contact'] = 'admincontroller/contact';
 $route['about'] = 'admincontroller/about';
 $route['aquiz'] = 'admincontroller/showQuizMenu';
 $route['add'] = 'admincontroller/addQuestion';
+$route['adduser'] = 'admincontroller/addUser';
 $route['save'] = 'admincontroller/saveQuiz';
 $route['aresult'] = 'admincontroller/showResult';
 $route['password'] = 'admincontroller/createPassword';

@@ -20,17 +20,21 @@ class Admincontroller extends CI_Controller {
 			
 			$email= $this->input->post('email');
 			$password = $this->input->post('password');
+            if ($this->form_validation->run()==false) {
+                $this->load->view('AdminLogin');
+            }else{
 
-            if(($email=="admin@gmail.com")&&($password=="aaaaa"))
-            {
-                $newdata = array('email' => $email,
+                if(($email=="admin@gmail.com")&&($password=="aaaaa"))
+                {
+                    $newdata = array('email' => $email,
                                      'isloggedIn' => True, 
                                       'usertype'=>"admin");
-                $this->session->set_userdata($newdata);
-                $this->load->view('Home');
-            }else{
-                $data['message']="Invalid Email or Password";
-                $this->load->view('AdminLogin',$data);
+                    $this->session->set_userdata($newdata);
+                    $this->load->view('Home');
+                }else{
+                    $data['message']="Invalid Email or Password";
+                    $this->load->view('AdminLogin',$data);
+                }
             }
 		}else{
             $this->load->view('AdminLogin');
@@ -224,6 +228,49 @@ class Admincontroller extends CI_Controller {
     }
     
     /**
+    * Function to add a new user
+    * @param void
+    * @return void
+    **/
+    public function addUser()
+    {
+        if($this->input->post()){
+            $this->form_validation->set_rules('id', 'id','required|min_length[1]|max_length[5]');
+            $this->form_validation->set_rules('name', 'name','required|min_length[5]|max_length[50]');
+            $this->form_validation->set_rules('email', 'email','required|min_length[5]|max_length[50]');
+            
+            $id = $this->input->post('id');
+            $name = $this->input->post('name');
+            $email= $this->input->post('email');
+
+            $credentials = array('id' => $id,
+                                 'name'=> $name,
+                                 'email'=>$email
+                                );
+            
+            $this->load->model('Adminmodel');
+            
+            if ($this->form_validation->run()==false) {
+                $this->load->view('AddUser');
+            }else{
+                if ($this->Adminmodel->checkIfUserExists($credentials)) {
+                    $data['message'] = "User already exists";
+                }else{
+                    if($this->Adminmodel->addUserDetails($credentials)){
+                        $data['message'] = "User added successfully";
+                    }else{
+                        $data['message'] = "Failed to add the user";
+                    }
+                }
+                $this->load->view('AddUser',$data);
+            }    
+
+        }else{
+            $this->load->view('AddUser');
+        }
+    }
+
+    /**
     * Function to load home page
     * @param void
     * @return void
@@ -247,7 +294,7 @@ class Admincontroller extends CI_Controller {
     * Function to load contact page
     * @param void
     * @return void
-    **/
+     **/
     public function contact()
     {
         $this->load->view('Contact');

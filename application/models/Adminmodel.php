@@ -108,4 +108,36 @@ class Adminmodel extends CI_Model {
 			return FALSE;
 		}
 	}
+
+	/**
+	* Function to check whether an user exists or not
+	* @param array
+	* @return bool
+	**/
+	public function checkIfUserExists($data)
+	{
+		$this->db->where('name', $data['name']);
+		$this->db->where('email', $data['email']);
+		$query=$this->db->get('Userdetails');
+		
+		if($query->num_rows() == 0){
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	/**
+	* Function to add a user
+	* @param array
+	* @return bool
+	**/
+	public function addUserDetails($credentials)
+	{
+		if ($this->db->insert('Userdetails',$credentials)) {
+			return true;
+		}else{
+			return false;
+		}
+	}
 }

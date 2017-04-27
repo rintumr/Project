@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="<?php echo base_url();?>assets/ico/favicon.ico">
 
-    <title>XYZ RECRUITMENT PORTAL-RESULTS</title>
+    <title>XYZ RECRUITMENT PORTAL</title>
 
     <!-- Bootstrap core CSS -->
     <link href="<?php echo base_url();?>assets/css/bootstrap.css" rel="stylesheet">
@@ -42,15 +42,16 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="<?php echo base_url();?>index.php/home">XYZ RECRUITMENT PORTAL</a>
+          <a class="navbar-brand" href="index.html">XYZ RECRUITMENT PORTAL</a>
         </div>
         <div class="navbar-collapse collapse navbar-right">
           <ul class="nav navbar-nav">
             <li><a href="<?php echo base_url();?>index.php/home">HOME</a></li>
             <li><a href="<?php echo base_url();?>index.php/about">ABOUT</a></li>
-            <li><a href="<?php echo base_url();?>index.php/contact">CONTACT</a></li>
-            <li><a href="<?php echo base_url();?>index.php/alogout">LOGOUT</a></li>
-          </div><!--/.nav-collapse -->
+            <li class="active"><a href="<?php echo base_url();?>index.php/contact">CONTACT</a></li>
+            <li class="active"><a href="<?php echo base_url();?>index.php/alogout">LOGOUT</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
       </div>
     </div>
 
@@ -60,84 +61,72 @@
 	<div id="blue">
 	    <div class="container">
 			<div class="row">
-				<h3>HOME->CREATE PASSWORD</h3>
+				<h3>ADD USER</h3>
 			</div><!-- /row -->
 	    </div> <!-- /container -->
 	</div><!-- /blue -->
 
-	 
 	<!-- *****************************************************************************************************************
-	 BODY
-	 ************************************************************************************************* -->
+	 CONTACT FORMS
+	 ***************************************************************************************************************** -->
 
-	 <div class="container">
-    <div class="row">
-      <div class="col-lg-6" style="float: right;">
-           <a href="<?php echo base_url();?>index.php/adduser" class="btn btn-success" style="float: right; width: 150px; height: 40px;"><span style="font-weight: bold;">Add User</span></a>
-      
-      </div>
-    </div>
-  </div>
-
-   <div class="container mtb">
+	 <div class="container mtb">
 	 	<div class="row">
-      <?php if(!empty($message)){?>
-        <div class="alert-success" style="text-align: center;height:50px;font-weight: bolder;padding-top: 20px">
-            <?php echo $message;?>
-        </div>
-      <?php }?>
-
-	 		<table class="table table-striped">
-	 			<thead>
-	 				<tr>
-
-	 				    <th>USERNAME</th>
-	 					  <th>EMAIL</th>					
-	 				</tr>
-	 			</thead>
-	 			<tbody>
-            <?php foreach ($result as $val) { ;?>
-                <tr>
-                 <td><?php echo $val->Name;?></td>
-                 <td><?php echo $val->Email;?></td>
-                 <th><a href="<?php echo base_url();?>index.php/generate/<?php echo $val->Id;?>" class="btn btn-theme">Generate Password</a></th>
-            <?php } ;?>
-            </tr>
-	 			</tbody>
-	 		</table>
+		 		<h3>Enter the Userdetails</h3>
+        <div class="hline"></div>
+        <div class="spacing"></div>
+        <div class="col-lg-4 col-lg-offset-4">
+        <?php {?>
+            <div class="alert-danger">
+                <?php echo validation_errors();?>
+            </div>
+        <?php };?>
+        <?php if(!empty($message)){?>
+            <div class="alert-success" style="text-align: center;height:50px;font-weight: bolder;padding-top: 20px">
+                <?php echo $message;?>
+            </div>
+        <?php }?>
+		 		<form role="form" method="POST" action="<?php echo base_url();?>index.php/adduser">
+					  <div class="form-group">
+					    <label for="InputSubject1">ID</label>
+					    <input type="id" class="form-control" name="id">
+					  </div>
+					  <div class="form-group">
+					    <label for="InputName1">NAME</label>
+					    <input type="name" class="form-control" name="name">
+					  </div>
+					  <div class="form-group">
+					    <label for="InputEmail1">EMAIL ADDRESS</label>
+					    <input type="email" class="form-control" name="email">
+					  </div>
+					  <input type="submit" class="btn btn-theme" value="Submit" style="float: right;">
+					</form>
+			</div><! --/col-lg-8 -->
 	 	</div><! --/row -->
 	 </div><! --/container -->
 
 
-
 	<!-- *****************************************************************************************************************
-	 BLUE
+	 FOOTER
 	 ***************************************************************************************************************** -->
-
-	 
-	
 	 <div id="twrap">
 	 	<div class="container">
     <p style="text-align: center; font-weight: bolder;">&#169 XYZ co.</p>
 	 	</div><! --/container -->
 	 </div><! --/twrap -->
-	 
-	
-	 
+		 			
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="<?php echo base_url();?>assets/js/bootstrap.min.js"></script>
-	  <script src="<?php echo base_url();?>assets/js/retina-1.1.0.js"></script>
-	  <script src="<?php echo base_url();?>assets/js/jquery.hoverdir.js"></script>
-	  <script src="<?php echo base_url();?>assets/js/jquery.hoverex.min.js"></script>
-	  <script src="<?php echo base_url();?>assets/js/jquery.prettyPhoto.js"></script>
-    <script src="<?php echo base_url();?>assets/js/jquery.isotope.min.js"></script>
-    <script src="<?php echo base_url();?>assets/js/custom.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script src="<?php echo base_url();?>assets/js/bootstrap.min.js"></script>
+	<script src="<?php echo base_url();?>assets/js/retina-1.1.0.js"></script>
+	<script src="<?php echo base_url();?>assets/js/jquery.hoverdir.js"></script>
+	<script src="<?php echo base_url();?>assets/js/jquery.hoverex.min.js"></script>
+	<script src="<?php echo base_url();?>assets/js/jquery.prettyPhoto.js"></script>
+  <script src="<?php echo base_url();?>assets/js/jquery.isotope.min.js"></script>
+  <script src="<?php echo base_url();?>assets/js/custom.js"></script>
 
 
   </body>
 </html>
-
-	 		
