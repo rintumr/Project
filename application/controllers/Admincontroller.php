@@ -28,7 +28,8 @@ class Admincontroller extends CI_Controller {
                 {
                     $newdata = array('email' => $email,
                                      'isloggedIn' => True, 
-                                      'usertype'=>"admin");
+                                     'usertype'=>"admin"
+                                    );
                     $this->session->set_userdata($newdata);
                     $this->load->view('Home');
                 }else{
@@ -49,8 +50,12 @@ class Admincontroller extends CI_Controller {
     public function showQuizMenu()
     {
         $this->load->model('Adminmodel');
-        $data['result']=$this->Adminmodel->getQuizList();
-        $this->load->view('QuizMenu',$data);
+        if ($this->Adminmodel->checkAdminLoggedIn()) {
+            $data['result']=$this->Adminmodel->getQuizList();
+            $this->load->view('QuizMenu',$data);
+        }else{
+            redirect('alogin');
+        }
 
     }
 
@@ -61,10 +66,15 @@ class Admincontroller extends CI_Controller {
     **/
     public function showQuestion()
     {
-        $id=$this->uri->segment(2);
         $this->load->model('Adminmodel');
-        $data['result']=$this->Adminmodel->getQuestion($id);
-        $this->load->view('ShowQuestion',$data);
+        if ($this->Adminmodel->checkAdminLoggedIn()) {
+            $id=$this->uri->segment(2);
+            $this->load->model('Adminmodel');
+            $data['result']=$this->Adminmodel->getQuestion($id);
+            $this->load->view('ShowQuestion',$data);
+        }else{
+            redirect('alogin');
+        }
 
     }
     
@@ -75,15 +85,20 @@ class Admincontroller extends CI_Controller {
     **/
     public function deleteQuiz()
     {
-        $id=$this->uri->segment(2);
         $this->load->model('Adminmodel');
-        if($this->Adminmodel->deleteQuestion($id)){
-            $data['message']="Question deleted!!";
-        }else{
-            $data['message']="Unable to perform the action";
-        }
+        if ($this->Adminmodel->checkAdminLoggedIn()) {
+            $id=$this->uri->segment(2);
+            $this->load->model('Adminmodel');
+            if($this->Adminmodel->deleteQuestion($id)){
+                $data['message']="Question deleted!!";
+            }else{
+                $data['message']="Unable to perform the action";
+            }
             $data['result']=$this->Adminmodel->getQuizList();
             $this->load->view('QuizMenu',$data);
+        }else{
+            redirect('alogin');
+        }
     }
 
     /**
@@ -93,67 +108,10 @@ class Admincontroller extends CI_Controller {
     **/
     public function editQuiz()
     {
-        $id=$this->uri->segment(2);
-        if($this->input->post()){
-            $question = $this->input->post('question');
-            $opt1= $this->input->post('opt1');
-            $opt2= $this->input->post('opt2');
-            $opt3= $this->input->post('opt3');
-            $opt4= $this->input->post('opt4');
-            $ans= $this->input->post('correct');
-
-            $credentials= array('question' => $question ,
-                                 'option1' => $opt1,
-                                 'option2' => $opt2,
-                                 'option3' => $opt3,
-                                 'option4' => $opt4,
-                                 'correct' => $ans
-                                 );
-            $this->load->model('Adminmodel');
-            if($this->Adminmodel->editQuestion($credentials,$id)){
-                $data['message']="Saved the changes!!!";
-            }else{
-                $data['message']="Unable to perform the action";
-            }
-            $data['result']=$this->Adminmodel->getQuizList();
-            $this->load->view('QuizMenu',$data);
-        }else{
-            $this->load->model('Adminmodel');
-            $data['result']=$this->Adminmodel->getQuestion($id);
-            $this->load->view('EditQuestion',$data);
-        }
-    }
-
-    /**
-    * Function to get the new question
-    * @param void
-    * @return void
-    **/
-    public function addQuestion()
-    {
-        $this->load->view('AddQuestion');
-
-    }
-
-    /**
-    * Function to save a question to the db
-    * @param void
-    * @return void
-    **/
-    public function saveQuiz()
-    {
-        if($this->input->post()){
-            $this->form_validation->set_rules('question', 'question','required|min_length[1]|max_length[500]');
-            $this->form_validation->set_rules('opt1', 'opt1','required|min_length[1]|max_length[150]');
-            $this->form_validation->set_rules('opt2', 'opt2','required|min_length[1]|max_length[150]');
-            $this->form_validation->set_rules('opt3', 'opt3','required|min_length[1]|max_length[150]');
-            $this->form_validation->set_rules('opt4', 'opt4','required|min_length[1]|max_length[150]');
-            $this->form_validation->set_rules('correct', 'correct','required|min_length[1]|max_length[150]');
-            
-            if($this->form_validation->run()==FALSE){
-                $msg['message']="All fields are required";
-                $this->load->view('AddQuestion',$msg);
-            }else{
+        $this->load->model('Adminmodel');
+        if ($this->Adminmodel->checkAdminLoggedIn()) {
+            $id=$this->uri->segment(2);
+            if($this->input->post()){
                 $question = $this->input->post('question');
                 $opt1= $this->input->post('opt1');
                 $opt2= $this->input->post('opt2');
@@ -169,14 +127,85 @@ class Admincontroller extends CI_Controller {
                                     'correct' => $ans
                                    );
                 $this->load->model('Adminmodel');
-                if($this->Adminmodel->saveQuestion($credentials)){
-                    $msg['message']="Question added successfully";
+                if($this->Adminmodel->editQuestion($credentials,$id)){
+                    $data['message']="Saved the changes!!!";
                 }else{
-                    $msg['message']="Unable to perform the action";
+                    $data['message']="Unable to perform the action";
                 }
-                $msg['result']=$this->Adminmodel->getQuizList();
-                $this->load->view('QuizMenu',$msg);
+                $data['result']=$this->Adminmodel->getQuizList();
+                $this->load->view('QuizMenu',$data);
+            }else{
+                $this->load->model('Adminmodel');
+                $data['result']=$this->Adminmodel->getQuestion($id);
+                $this->load->view('EditQuestion',$data);
             }
+        }else{
+            redirect('alogin');
+        }
+    }
+
+    /**
+    * Function to get the new question
+    * @param void
+    * @return void
+    **/
+    public function addQuestion()
+    {
+        $this->load->model('Adminmodel');
+        if ($this->Adminmodel->checkAdminLoggedIn()) {
+            $this->load->view('AddQuestion');
+        }else{
+            redirect('alogin');
+        }
+    }
+
+    /**
+    * Function to save a question to the db
+    * @param void
+    * @return void
+    **/
+    public function saveQuiz()
+    {
+        $this->load->model('Adminmodel');
+        if ($this->Adminmodel->checkAdminLoggedIn()) {
+            if($this->input->post()){
+                $this->form_validation->set_rules('question', 'question','required|min_length[1]|max_length[500]');
+                $this->form_validation->set_rules('opt1', 'opt1','required|min_length[1]|max_length[150]');
+                $this->form_validation->set_rules('opt2', 'opt2','required|min_length[1]|max_length[150]');
+                $this->form_validation->set_rules('opt3', 'opt3','required|min_length[1]|max_length[150]');
+                $this->form_validation->set_rules('opt4', 'opt4','required|min_length[1]|max_length[150]');
+                $this->form_validation->set_rules('correct', 'correct','required|min_length[1]|max_length[150]');
+            
+                if($this->form_validation->run()==FALSE){
+                    $msg['message']="All fields are required";
+                    $this->load->view('AddQuestion',$msg);
+                }else{
+                    $question = $this->input->post('question');
+                    $opt1= $this->input->post('opt1');
+                    $opt2= $this->input->post('opt2');
+                    $opt3= $this->input->post('opt3');
+                    $opt4= $this->input->post('opt4');
+                    $ans= $this->input->post('correct');
+
+                    $credentials= array('question' => $question ,
+                                        'option1' => $opt1,
+                                        'option2' => $opt2,
+                                        'option3' => $opt3,
+                                        'option4' => $opt4,
+                                        'correct' => $ans
+                                       );
+                    $this->load->model('Adminmodel');
+                    if($this->Adminmodel->saveQuestion($credentials)){
+                        $msg['message']="Question added successfully";
+                    }else{
+                        $msg['message']="Unable to perform the action";
+                    }
+                    $msg['result']=$this->Adminmodel->getQuizList();
+                    $this->load->view('QuizMenu',$msg);
+                }
+            }
+        }else{
+            redirect('alogin');
         }
     }    
 
@@ -188,8 +217,12 @@ class Admincontroller extends CI_Controller {
     public function showResult()
     {
         $this->load->model('Adminmodel');
-        $data['result']=$this->Adminmodel->getResult();
-        $this->load->view('ResultPage', $data);
+        if ($this->Adminmodel->checkAdminLoggedIn()) {
+            $data['result']=$this->Adminmodel->getResult();
+            $this->load->view('ResultPage', $data);
+        }else{
+            redirect('alogin');
+        }
     }
 
     /**
@@ -200,8 +233,12 @@ class Admincontroller extends CI_Controller {
     public function createPassword()
     {
         $this->load->model('Adminmodel');
-        $data['result']=$this->Adminmodel->viewUser();
-        $this->load->view('CreatePassword',$data);
+        if ($this->Adminmodel->checkAdminLoggedIn()) {
+            $data['result']=$this->Adminmodel->viewUser();
+            $this->load->view('CreatePassword',$data);
+        }else{
+            redirect('alogin');
+        }
     }
     
     /**
@@ -211,20 +248,24 @@ class Admincontroller extends CI_Controller {
     **/
     public function generatePassword()
     {
-        $id=$this->uri->segment(2);
-        $length=12;
-        $characterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";
-        $password = substr( str_shuffle( $characterSet ), 0, $length);
-        $details = array('password' => $password );
         $this->load->model('Adminmodel');
-        if($this->Adminmodel->savePassword($details, $id))
-        {
-            $data['message']="Password sent to user!!";
+        if ($this->Adminmodel->checkAdminLoggedIn()) {
+            $id=$this->uri->segment(2);
+            $length=8;
+            $characterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            $password = substr( str_shuffle( $characterSet ), 0, $length);
+            $details = array('password' => $password );
+            $this->load->model('Adminmodel');
+            if($this->Adminmodel->savePassword($details, $id)){
+                $data['message']="Password sent to user!!";
+            }else{
+                $data['message']="Failed to send the password!!!";
+            }
+            $data['result']=$this->Adminmodel->viewUser();
+            $this->load->view('CreatePassword',$data);
         }else{
-            $data['message']="Failed to send the password!!!";
+            redirect('alogin');
         }
-        $data['result']=$this->Adminmodel->viewUser();
-        $this->load->view('CreatePassword',$data);
     }
     
     /**
@@ -234,39 +275,44 @@ class Admincontroller extends CI_Controller {
     **/
     public function addUser()
     {
-        if($this->input->post()){
-            $this->form_validation->set_rules('id', 'id','required|min_length[1]|max_length[5]');
-            $this->form_validation->set_rules('name', 'name','required|min_length[5]|max_length[50]');
-            $this->form_validation->set_rules('email', 'email','required|min_length[5]|max_length[50]');
+        $this->load->model('Adminmodel');
+        if ($this->Adminmodel->checkAdminLoggedIn()) {
+            if($this->input->post()){
+                $this->form_validation->set_rules('id', 'id','required|min_length[1]|max_length[5]');
+                $this->form_validation->set_rules('name', 'name','required|min_length[5]|max_length[50]');
+                $this->form_validation->set_rules('email', 'email','required|min_length[5]|max_length[50]');
             
-            $id = $this->input->post('id');
-            $name = $this->input->post('name');
-            $email= $this->input->post('email');
+                $id = $this->input->post('id');
+                $name = $this->input->post('name');
+                $email= $this->input->post('email');
 
-            $credentials = array('id' => $id,
-                                 'name'=> $name,
-                                 'email'=>$email
-                                );
+                $credentials = array('id' => $id,
+                                     'name'=> $name,
+                                     'email'=>$email
+                                    );
             
-            $this->load->model('Adminmodel');
+                $this->load->model('Adminmodel');
             
-            if ($this->form_validation->run()==false) {
-                $this->load->view('AddUser');
-            }else{
-                if ($this->Adminmodel->checkIfUserExists($credentials)) {
-                    $data['message'] = "User already exists";
+                if ($this->form_validation->run()==false) {
+                    $this->load->view('AddUser');
                 }else{
-                    if($this->Adminmodel->addUserDetails($credentials)){
-                        $data['message'] = "User added successfully";
+                    if ($this->Adminmodel->checkIfUserExists($credentials)) {
+                        $data['message'] = "User already exists";
                     }else{
-                        $data['message'] = "Failed to add the user";
+                        if($this->Adminmodel->addUserDetails($credentials)){
+                            $data['message'] = "User added successfully";
+                        }else{
+                            $data['message'] = "Failed to add the user";
+                        }
                     }
-                }
-                $this->load->view('AddUser',$data);
-            }    
+                    $this->load->view('AddUser',$data);
+                }    
 
+            }else{
+                $this->load->view('AddUser');
+            }
         }else{
-            $this->load->view('AddUser');
+            redirect('alogin');
         }
     }
 
@@ -277,7 +323,12 @@ class Admincontroller extends CI_Controller {
     **/
     public function home()
     {
-        $this->load->view('Home');
+        $this->load->model('Adminmodel');
+        if ($this->Adminmodel->checkAdminLoggedIn()) {
+            $this->load->view('Home');
+        }else{
+            redirect('alogin');
+        }
     }
 
     /**
@@ -287,7 +338,12 @@ class Admincontroller extends CI_Controller {
     **/
     public function about()
     {
-        $this->load->view('About');
+        $this->load->model('Adminmodel');
+        if ($this->Adminmodel->checkAdminLoggedIn()) {
+            $this->load->view('About');
+        }else{
+            redirect('alogin');
+        }
     }
 
     /**
@@ -297,7 +353,12 @@ class Admincontroller extends CI_Controller {
      **/
     public function contact()
     {
-        $this->load->view('Contact');
+        $this->load->model('Adminmodel');
+        if ($this->Adminmodel->checkAdminLoggedIn()) {
+            $this->load->view('Contact');
+        }else{
+            redirect('alogin');
+        }
     }
 
     /**
@@ -312,6 +373,6 @@ class Admincontroller extends CI_Controller {
         $this->session->unset_userdata('isloggedIn');
         $this->session->unset_userdata('usertype');
         $this->session->sess_destroy();
-        $this->load->view('AdminLogin');
+        redirect('alogin');
     }
 }

@@ -67,39 +67,43 @@ class Usercontroller extends CI_Controller
 	public function showQuestion()
 	{
 		$this->load->model('Usermodel');
-		$totalQuestion=$this->Usermodel->getNumberOfQuestions();	
-		$quizno=$this->session->userdata('count');
+		if($this->Usermodel->checkUserLoggedIn()){
+			$totalQuestion=$this->Usermodel->getNumberOfQuestions();	
+		    $quizno=$this->session->userdata('count');
 
-		if ($this->input->post()) {
-			$questionid = $this->input->post('questionId');
-			$answer = $this->input->post('options');
-			$email = $this->session->userdata['email'];
-			$details = array('id' => $questionid,
-			                 'email'=> $email,
-			                 'answer'=> $answer
-			                );
-			if($this->Usermodel->checkAnswer($details)){
-			    $this->Usermodel->saveAnswer($details);
-		    }
-		    $quizno = $quizno+1;
-		    if ($quizno <= $totalQuestion){
-		    	$question['result']=$this->Usermodel->getNextQuestion($quizno);
-		        $this->session->set_userdata('count',$quizno);
-		        $this->load->view('Quiz',$question);
+		    if ($this->input->post()) {
+			    $questionid = $this->input->post('questionId');
+			    $answer = $this->input->post('options');
+			    $email = $this->session->userdata['email'];
+			    $details = array('id' => $questionid,
+			                     'email'=> $email,
+			                     'answer'=> $answer
+			                    );
+			    if($this->Usermodel->checkAnswer($details)){
+			        $this->Usermodel->saveAnswer($details);
+		        }
+		        $quizno = $quizno+1;
+		        if ($quizno <= $totalQuestion){
+		    	    $question['result']=$this->Usermodel->getNextQuestion($quizno);
+		            $this->session->set_userdata('count',$quizno);
+		            $this->load->view('Quiz',$question);
+		        }else{
+		    	    $this->Usermodel->saveResult($email);	
+		    	    redirect('result');
+		        }
 		    }else{
-		    	$this->Usermodel->saveResult($email);	
-		    	redirect('result');
-		    }
-		}else{
-		    if((isset($quizno))&& !empty($quizno)){
-		    	if ($quizno==1) {
-		    		$question['result']=$this->Usermodel->getFirstQuestion();
-		            $this->load->view('Quiz',$question);	
-		    	}	
-		    }
-		} 
+		        if((isset($quizno))&& !empty($quizno)){
+		    	    if ($quizno==1) {
+		    		    $question['result']=$this->Usermodel->getFirstQuestion();
+		                $this->load->view('Quiz',$question);	
+		    	    }	
+		        }
+		    } 
 
-		$this->Usermodel->changePassword(); 
+		    $this->Usermodel->changePassword(); 
+	    }else{
+	    	redirect('login');
+	    }
 	}
 	
 	/**
@@ -109,14 +113,18 @@ class Usercontroller extends CI_Controller
 	**/
 	public function showResult()
 	{	
-		$user=$this->session->userdata('email');
 		$this->load->model('Usermodel');
-		$data['result']=$this->Usermodel->getResult($user);
-		$value= $data['result'];
-		if($value[0]->marks==0){
-			$data['message']= "Sorry you have not answered any questions";
-		}
-			$this->load->view('Summary',$data);
+		if ($this->Usermodel->checkUserLoggedIn()) {
+		    $user=$this->session->userdata('email');
+		    $data['result']=$this->Usermodel->getResult($user);
+		    $value= $data['result'];
+		    if($value[0]->marks==0){
+			    $data['message']= "Sorry you have not answered any questions";
+		    }
+			    $this->load->view('Summary',$data);
+	    }else{
+	    	redirect('login');
+	    }
 	}
 
 	/**

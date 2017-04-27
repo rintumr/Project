@@ -153,16 +153,18 @@ class Usermodel extends CI_Model
 	}
 
 	/**
-	* Function to check the session
+	* Function to check whether user is logged in or not
 	* @param void
-	* @return void
+	* @return bool
 	**/
-	public function checkIfUserLoggedIn()
+	public function checkUserLoggedIn()
 	{
-	    if($this->session->userdata['isloggedIn']==True){
-	    	if ($this->session->userdata['usertype']=="user") {
-	    		return true;
-	    	}
-	    }	
+		$usertype = $this->session->userdata('usertype');
+		$loggedIn = $this->session->userdata('isloggedIn');
+		if (!empty($loggedIn) && $usertype=="user") {
+			return true;
+		}else{
+			return false;
+		}
 	}
 }

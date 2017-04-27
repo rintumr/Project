@@ -140,4 +140,20 @@ class Adminmodel extends CI_Model {
 			return false;
 		}
 	}
+
+	/**
+	* Function to check whether admin is logged in or not
+	* @param void
+	* @return bool
+	**/
+	public function checkAdminLoggedIn()
+	{
+		$usertype = $this->session->userdata('usertype');
+		$loggedIn = $this->session->userdata('isloggedIn');
+		if (!empty($loggedIn) && $usertype=="admin") {
+			return true;
+		}else{
+			return false;
+		}
+	}
 }
