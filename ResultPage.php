@@ -84,9 +84,9 @@
 	 			</thead>
 	 			<tbody>
              <tbody>
-             <?php foreach ($result as $key=>$val) { ;?>
+             <?php foreach ($result as $val) { ;?>
                 <tr>
-                 <td><?php echo $key+1;?></td>
+                 <td><?php echo $val->Id;?></td>
                  <td><?php echo $val->email;?></td>
                  <td><?php echo $val->marks;?></td>
             <?php } ;?>

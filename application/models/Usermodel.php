@@ -144,8 +144,8 @@ class Usermodel extends CI_Model
 		$query=$this->db->get('Userdetails');
 		$value=$query->result();
         $id=$value[0]->Id;
-		$length=12;
-        $characterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";
+		$length=8;
+        $characterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         $password = substr( str_shuffle( $characterSet ), 0, $length);
         $details = array('password' => $password );
         $this->load->model('Adminmodel');
